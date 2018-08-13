@@ -30,8 +30,20 @@ def main():
 
 
 def mock_http_requests(url_ids):
+    """
+    Send a GET request to load specifics about a song that are not included in the static HTML that bs4 gives us
+
+    :param url_ids: array of strings or ints
+    :return: dictionary of dictionaries, indexed by id
+    """
     url = "http://multitrack.eecs.qmul.ac.uk/search_linked"
-    headers = {  # copied from a real browser request (in Chrome), probably not all necessary for functionality
+    # copied from a real browser request (in Chrome), probably not all necessary for functionality
+    # To generate conveniently, do the following:
+    #   1. Open a song page in Google Chrome with the developer console open
+    #   2. In the network tab, right click on the GET request send to the search_linked API and copy the cURL for it
+    #   3. Import that cURL text into Postman (in the left corner, "Import", then "Paste Raw Text")
+    #   4. Export Python code from Postman by clicking "Code" on the right hand side and selecting "Python Requests"
+    headers = {
         'dnt': "1",
         'accept-encoding': "gzip, deflate",
         'accept-language': "en-US,en;q=0.9",
@@ -68,16 +80,12 @@ def get_title_urls(n_pages):
     for page_num in range(1, n_pages + 1):
         sauce = urllib.request.urlopen(base_domain + '/?page={0}'.format(page_num)).read()
         soup = bs4.BeautifulSoup(sauce, 'lxml')
-
-        all_urls = []
-        for url in soup.find_all('a'):
-            all_urls.append(url)
+        for url in soup.find_all('a'):  # for all links on the page
             href = url.get('href')
-            if href and "query=title" in href:
+            if href and "query=title" in href:  # if this is a link to a song page
                 ids.append(url.get('id'))
 
         bar.next()
-
     bar.finish()
     return ids
 
