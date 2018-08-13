@@ -6,11 +6,8 @@ import requests
 from progress.bar import Bar
 
 
-def mock_http(url_id):
+def mock_http_requests(url_ids):
     url = "http://multitrack.eecs.qmul.ac.uk/search_linked"
-
-    querystring = {"query": "title", "id": url_id}
-
     headers = {  # copied from a real browser request (in Chrome), probably not all necessary for functionality
         'dnt': "1",
         'accept-encoding': "gzip, deflate",
@@ -25,10 +22,20 @@ def mock_http(url_id):
         'postman-token': "5417c086-edb4-8039-bf5c-2154a72e6e5b"
     }
 
-    response = requests.request("GET", url, headers=headers, params=querystring)
+    # using a session speeds things up because we don't need a fresh HTTP connection on each request
+    s = requests.Session()
+    s.headers.update(headers)
 
-    response = json.loads(response.text)['0']
-    return response
+    responses = {}
+    bar = Bar("Mocking HTTP calls...", max=len(url_ids))
+    for url_id in url_ids:
+        querystring = {"query": "title", "id": url_id}
+        response = s.get(url, params=querystring)
+        responses[url_id] = json.loads(response.text)['0']
+
+        bar.next()
+    bar.finish()
+    return responses
 
 
 def get_title_urls(n_pages):
@@ -67,14 +74,8 @@ def main():
     if cache_responses:
         responses = load_json(responses_path)
     else:
-        responses = {}
-        bar = Bar("Mocking HTTP calls...", max=len(url_ids))
-        for url_id in url_ids:
-            responses[url_id] = mock_http(url_id)
-            bar.next()
-        bar.finish()
-
-        dump_json(responses_path, responses_path)
+        responses = mock_http_requests(url_ids)
+        dump_json(responses_path, responses)
 
 
 def dump_json(path, j):
