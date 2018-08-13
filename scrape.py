@@ -59,16 +59,13 @@ def main():
     cache_responses = False
 
     if cache_ids:
-        with open(ids_path) as json_file:
-            url_ids = json.load(json_file)
+        url_ids = load_json(ids_path)
     else:
-        with open(ids_path, 'w') as outfile:
-            url_ids = get_title_urls(24)
-            json.dump(url_ids, outfile)
+        url_ids = get_title_urls(24)
+        dump_json(ids_path, url_ids)
 
     if cache_responses:
-        with open(responses_path) as f:
-            responses = json.load(f)
+        responses = load_json(responses_path)
     else:
         responses = {}
         bar = Bar("Mocking HTTP calls...", max=len(url_ids))
@@ -76,6 +73,19 @@ def main():
             responses[url_id] = mock_http(url_id)
             bar.next()
         bar.finish()
+
+        dump_json(responses_path, responses_path)
+
+
+def dump_json(path, j):
+    with open(path, 'w') as f:
+        json.dump(j, f)
+
+
+def load_json(path):
+    with open(path) as f:
+        j = json.load(f)
+    return j
 
 
 if __name__ == "__main__":
