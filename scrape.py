@@ -5,6 +5,8 @@ import bs4
 import requests
 from progress.bar import Bar
 
+from utils import dump_json, load_json
+
 
 def mock_http_requests(url_ids):
     url = "http://multitrack.eecs.qmul.ac.uk/search_linked"
@@ -63,7 +65,7 @@ def main():
     ids_path = 'url_ids.json'
     responses_path = 'responses.json'
     cache_ids = True
-    cache_responses = False
+    cache_responses = True
 
     if cache_ids:
         url_ids = load_json(ids_path)
@@ -77,16 +79,7 @@ def main():
         responses = mock_http_requests(url_ids)
         dump_json(responses_path, responses)
 
-
-def dump_json(path, j):
-    with open(path, 'w') as f:
-        json.dump(j, f)
-
-
-def load_json(path):
-    with open(path) as f:
-        j = json.load(f)
-    return j
+    print(responses)
 
 
 if __name__ == "__main__":
