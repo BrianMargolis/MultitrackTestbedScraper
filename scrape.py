@@ -8,6 +8,27 @@ from progress.bar import Bar
 from utils import dump_json, load_json
 
 
+def main():
+    ids_path = 'url_ids.json'
+    responses_path = 'responses.json'
+    cache_ids = True
+    cache_responses = True
+
+    if cache_ids:
+        url_ids = load_json(ids_path)
+    else:
+        url_ids = get_title_urls(24)
+        dump_json(ids_path, url_ids)
+
+    if cache_responses:
+        responses = load_json(responses_path)
+    else:
+        responses = mock_http_requests(url_ids)
+        dump_json(responses_path, responses)
+
+    print(responses)
+
+
 def mock_http_requests(url_ids):
     url = "http://multitrack.eecs.qmul.ac.uk/search_linked"
     headers = {  # copied from a real browser request (in Chrome), probably not all necessary for functionality
@@ -59,27 +80,6 @@ def get_title_urls(n_pages):
 
     bar.finish()
     return ids
-
-
-def main():
-    ids_path = 'url_ids.json'
-    responses_path = 'responses.json'
-    cache_ids = True
-    cache_responses = True
-
-    if cache_ids:
-        url_ids = load_json(ids_path)
-    else:
-        url_ids = get_title_urls(24)
-        dump_json(ids_path, url_ids)
-
-    if cache_responses:
-        responses = load_json(responses_path)
-    else:
-        responses = mock_http_requests(url_ids)
-        dump_json(responses_path, responses)
-
-    print(responses)
 
 
 if __name__ == "__main__":
