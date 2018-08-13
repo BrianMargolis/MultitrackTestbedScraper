@@ -18,11 +18,8 @@ def main():
         url_ids = get_title_urls(24)
         dump_json(ids_path, url_ids)
 
-    try:
-        responses = load_json(responses_path)
-    except FileNotFoundError:
-        responses = mock_http_requests(url_ids)
-        dump_json(responses_path, responses)
+    responses = mock_http_requests(url_ids)
+    dump_json(responses_path, responses)
 
 
 def mock_http_requests(url_ids):
@@ -57,12 +54,12 @@ def mock_http_requests(url_ids):
     s = requests.Session()
     s.headers.update(headers)
 
-    responses = {}
+    responses = []
     bar = Bar("Mocking HTTP calls...", max=len(url_ids))
     for url_id in url_ids:
         querystring = {"query": "title", "id": url_id}
         response = s.get(url, params=querystring)
-        responses[url_id] = json.loads(response.text)['0']
+        responses.append(json.loads(response.text)['0'])
 
         bar.next()
     bar.finish()
@@ -83,7 +80,7 @@ def get_title_urls(n_pages):
 
         bar.next()
     bar.finish()
-    return ids
+    return list(set(ids))  # remove duplicates
 
 
 if __name__ == "__main__":
