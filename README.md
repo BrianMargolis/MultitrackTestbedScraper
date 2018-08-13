@@ -12,4 +12,27 @@ Activate the venv and run:
 ```
 > python scrape.py
 ```
-The script creates a file, `track_information.json`, that contains detailed information on each of the tracks in the database.
+The script creates a file, `track_information.json`, that contains detailed information on each of the tracks in the database. The full list of fields is:
+* licenseType
+* songType
+* numberOfTracks
+* numberOfStems
+* composer
+* mirrorLink
+* issues
+* title
+* totalSize
+* licenseType_uri
+* comments
+* numberOfMixes
+* songType_uri
+* recordingEngineer_uri
+* song
+* licenseFile
+* recordingLocation
+* artist
+* artist_uri
+* composer_uri
+* recordingEngineer
+* recordingDate
+* link
