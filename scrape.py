@@ -9,24 +9,20 @@ from utils import dump_json, load_json
 
 
 def main():
-    ids_path = 'url_ids.json'
-    responses_path = 'responses.json'
-    cache_ids = True
-    cache_responses = True
+    ids_path = '.url_ids.json'
+    responses_path = 'track_information.json'
 
-    if cache_ids:
+    try:
         url_ids = load_json(ids_path)
-    else:
+    except FileNotFoundError:
         url_ids = get_title_urls(24)
         dump_json(ids_path, url_ids)
 
-    if cache_responses:
+    try:
         responses = load_json(responses_path)
-    else:
+    except FileNotFoundError:
         responses = mock_http_requests(url_ids)
         dump_json(responses_path, responses)
-
-    print(responses)
 
 
 def mock_http_requests(url_ids):
