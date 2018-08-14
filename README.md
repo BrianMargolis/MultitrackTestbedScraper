@@ -2,13 +2,16 @@
 Python utility that scrapes the [Multitrack Testbed database](http://multitrack.eecs.qmul.ac.uk/) to get a variety of detailed information about each of the available titles.
 
 ## Install
-Clone the repo and run:
+Clone the repo:
+```
+git clone https://github.com/BrianMargolis/MultitrackTestbedScraper.git
+```
+Install the prerequisites (into a virtual environment, probably):
 ```
 > pip install -r requirements.txt
 ```
 
 ## Operation
-Activate the venv and run:
 ```
 > python scrape.py
 ```
